@@ -1,0 +1,67 @@
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/" id="brandName"><img src="../../Public/Assets/img/Logo_Blanco.png" style="width:150px"></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link {{#if dispositivos}} active{{/if}}"  href="" data-ruta="/dispositivos-conectados" id="linkDispositivosConectados">Dispositivos Conectados</a>
+        </li> 
+        <li class="nav-item">
+          <a class="nav-link {{#if datos}} active{{/if}}"  href="" data-ruta="/consulta-datos" id="linkConsultarDatos">Consultar Datos</a>
+        </li> 
+        <li class="nav-item">
+          <a class="nav-link" href="" id="linkLogout">Logout</a>
+        </li>      
+      </ul>      
+    </div>
+  </div>
+
+<style>
+    .active{
+        font-weight: 700;
+    }
+</style>
+
+<script>
+
+let token = localStorage.getItem("token");
+let linkDispositivosConectados = document.getElementById("linkDispositivosConectados");
+let linkConsultarDatos = document.getElementById("linkConsultarDatos");
+//manejador envio tokens
+
+const manejadorSendToken = (ruta) => {
+    try {
+        if (token) {
+            location.href = `${ruta}?token=${token}`
+        } else {
+            alert("no existe un token para continuar a la ruta.")
+        }
+        
+    } catch (error) {
+        alert("Error al intentar entrar a una ruta protegida, debe existir un token.");
+    }
+
+}
+linkDispositivosConectados.addEventListener("click", (event) => {
+    event.preventDefault();
+    manejadorSendToken(linkDispositivosConectados.dataset.ruta);
+
+});
+linkConsultarDatos.addEventListener("click", (event) => {
+    event.preventDefault();
+    manejadorSendToken(linkConsultarDatos.dataset.ruta);
+});
+
+
+
+//lógica logout
+   linkLogout.addEventListener("click", (event) => {
+    event.preventDefault();
+    localStorage.clear();
+    location.href = "/";
+
+  })
+
+</script> 

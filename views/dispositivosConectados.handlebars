@@ -1,0 +1,146 @@
+    <div class="text-center m-3 text-white">
+        <h2>Dispositivos CAM conectados</h2>
+    </div>
+    <div class="d-flex justify-content-center" style="align-content: center;">
+        
+        <div class="d-flex text-white bg-dark">
+            <form class="m-3 text-white" id="modbusForm">            
+                <div class="mb-3">
+                  <label for="deviceIP" class="form-label"><b>Dirección IP dispositivo:</b></label>
+                  <input type="text" class="form-control bg-dark text-white" id="deviceIP" placeholder="ej: 192.168.1.2" name="ipaddress">
+                </div>
+
+                <div class="mb-3">
+                  <label for="tcpport" class="form-label"><b>Puerto TCP:</b></label>
+                  <input type="text" class="form-control bg-dark text-white" id="tcpport" placeholder="ej: 502" name="tcpport">
+                </div>
+    
+                <div class="mb-3">
+                  <label for="slaveID" class="form-label"><b>Modbus ID:</b></label>
+                  <input type="text" class="form-control bg-dark text-white" id="slaveID" placeholder="1 - 10" name="slaveid">
+                </div>
+    
+                <div class="mb-3">
+                  <label for="startReg" class="form-label"><b>Primer registro a leer:</b></label>
+                  <input type="text" class="form-control bg-dark text-white" id="startReg" placeholder="0 - 40000" name="startreg">
+                </div>
+    
+                <div class="mb-3">
+                  <label for="numRegs" class="form-label"><b>Numero de registros a leer:</b></label>
+                  <input type="text" class="form-control bg-dark text-white" id="numRegs" placeholder="1 - 9999" name="numregs">
+                </div>
+    
+                <div class="mb-3">
+                  <label for="secPolling" class="form-label"><b>Frecuencia de polling (ms):</b></label>
+                  <input type="text" class="form-control bg-dark text-white" id="secPolling" placeholder="min 5000" name="freqpolling">
+                </div>
+
+                <div class="d-grid gap-2">
+                  <button type="submit" class="btn btn-success mb-3">Conectar</button>                   
+                </div> 
+
+            </form>
+        </div>
+
+        <div class="d-flex bg-dark">
+            <div class="card text-white bg-dark" style="width: 18rem;">
+                <div class="card-body">
+                  <h5 class="card-title mb-3">Informacion</h5>
+                  <p class="card-text mb-3"><b>Status:</b></p>
+                  <p class="card-text mb-3" id="connStatus">Actualizando información...</p>
+                  <p class="card-text mb-3"><b>Tiempo transcurrido:</b></p>
+                  <p class="card-text mb-3" id="timeConn">Actualizando información...</p>
+                </div>                
+            </div>            
+        </div>                
+    </div>
+
+    <style>
+      body {
+        background-color: black;
+      }
+
+      footer {
+        width: 100%;
+        position : fixed;
+        bottom : 0;
+      }
+    </style>
+
+    {{!-- script para envio de formulario de login mediante form data (modulo express-update) --}}
+
+<script>
+    let modbusForm = document.getElementById("modbusForm");
+    let connStatus = document.getElementById("connStatus");
+    let timeConn = document.getElementById("timeConn");
+    let deviceIP = document.getElementById("deviceIP");
+    let devicePort = document.getElementById("tcpport");
+    let deviceID = document.getElementById("slaveID");
+
+    modbusForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        try{            
+            let data = new FormData(modbusForm);
+            let response = await fetch("/api/v1/startconn",{
+                method: "POST",
+                body: data
+            });
+
+            let result = await response.json();
+            if(result.code == 200){
+              console.log(result.message);
+            }else if(result.code == 400) {
+              alert(result.message);
+            }else{
+              alert(result.message);
+            }
+        }catch(error){
+            console.log("Error.");
+        }
+    })
+
+window.addEventListener("load", async function(event){
+  var updateConnStatus = setInterval(async () => {
+      try{            
+            let response = await fetch("/api/v1/connstatus");
+
+            let result = await response.json();
+            console.log(result);
+            
+            if(result.connection[0].conn == true){
+              let connDate = new Date(result.connection[0].time);
+              let actualDate = new Date();
+              let diff = actualDate - connDate.getTime();
+              connStatus.innerHTML = `conectado`;
+              let days =  Math.floor(diff / (1000 * 60 * 60 * 24));
+              let hours =  Math.floor(((diff - (days * 1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
+              let minutes =  Math.floor((diff - (days * 1000 * 60 * 60 * 24) - (hours * 1000 * 60 * 60)) / (1000 * 60));
+              let seconds =  Math.floor((diff - ((days * 1000 * 60 * 60 * 24) + (hours * 1000 * 60 * 60) + (minutes * 1000 * 60 ))) / (1000));
+              timeConn.innerText = `${days} días, ${hours} horas : ${minutes} min : ${seconds} secs.`;
+              deviceIP.value = result.connection[0].ip;
+              devicePort.value = result.connection[0].port;
+              deviceID.value = result.connection[0].modbusid;
+
+            } else{
+              let connDate = new Date(result.connection[0].time);
+              let actualDate = new Date();
+              let diff = actualDate - connDate.getTime();
+              connStatus.innerHTML = `desconectado`;
+              let days =  Math.floor(diff / (1000 * 60 * 60 * 24));
+              let hours =  Math.floor(((diff - (days * 1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
+              let minutes =  Math.floor((diff - (days * 1000 * 60 * 60 * 24) - (hours * 1000 * 60 * 60)) / (1000 * 60));
+              let seconds =  Math.floor((diff - ((days * 1000 * 60 * 60 * 24) + (hours * 1000 * 60 * 60) + (minutes * 1000 * 60 ))) / (1000));
+              timeConn.innerText = `${days} días, ${hours} horas : ${minutes} min : ${seconds} secs.`;
+              deviceIP.value = result.connection[0].ip;
+              devicePort.value = result.connection[0].port;
+              deviceID.value = result.connection[0].modbusid;
+
+            }          
+        }catch(error){
+          //connStatus.innerText = `informacion no disponible...`;
+          console.log("Error.");
+        }
+    }, 5000);
+} )
+
+</script>

@@ -1,0 +1,370 @@
+<div class="text-center m-3 text-white">
+  <h2>Consulta de datos</h2>
+</div>
+
+<div class="d-flex justify-content-left" style="align-content: left;">
+  <div class="text-left m-3 mb-0 text-white">
+    <h5>Ingrese criterios de búsqueda: </h5>
+  </div>
+</div>
+
+<div class="d-flex m-3 mt-2 justify-content-left" style="align-content: left;">
+  <form class="text-white" id="filtrosForm">
+    <select required class="form-select m-3 mb-1" id="inputTipoDeDato" name="inputTipoDeDato" style="width: 400px;">
+      <option selected>Elija el tipo de dato a consultar: </option>
+      <option value="1">Temperaturas de Superficie</option>
+      <option value="2">Temperatura ambiental</option>
+      <option value="3">Humedad relativa</option>
+    </select>
+
+    <select required class="form-select m-3 mb-1" id="inputDatoEspecifico" style="width: 400px;">
+      <option selected>Seleccione el dato especifico: </option>
+    </select>
+
+    <div class="input-group m-3 mb-2 mt-2" style="align-content: left; width: 400px;">
+      <span class="input-group-text mt-1 mb-1" style="width: 140px;">Valor Mínimo: </span>
+      <input type="number" min="0" max="2000" step="1" value="" class="form-control mt-1 mb-1" style="width: 180px;" id="valorMinimo" name="valorMinimo">
+      <span class="input-group-text mt-1 mb-1" style="width: 140px;">Valor Máximo: </span>
+      <input type="number" min="0" max="2000" step="1" value="" class="form-control mt-1 mb-1" style="width: 180px;" id="valorMaximo" name="valorMaximo">
+    </div>    
+
+    <div class="input-group m-3 mb-2 mt-2" style="align-content: left; width: 400px;">
+      <span class="input-group-text mt-1 mb-1" style="width: 180px;">Ingrese Fecha Inicio: </span>
+      <input type="date" class="form-control mt-1 mb-1" style="width: 180px;" name="fechaInicio">     
+      <span class="input-group-text mt-1 mb-1" style="width: 180px;">Ingrese Fecha Término: </span>
+      <input type="date" class="form-control mt-1 mb-1" style="width: 180px;" name="fechaTermino">    
+    </div>
+
+    <select required class="form-select m-3 mb-1" id="inputOrdenPor" name="inputOrdenPor" style="width: 400px;">
+      <option selected>Ordenar Por:</option>         
+      <option value="id">Id</option>      
+      <option value="valor">Valor</option>
+      <option value="time">Fecha</option>
+    </select>
+
+    <div class="form-check form-switch m-3 mb-1">
+      <input class="form-check-input" type="checkbox" id="inputAscDesc" name="inputAscDesc" value="DESC">
+      <label class="form-check-label" for="inputAscDesc">Orden descendente</label>
+    </div>
+
+    <div class="input-group m-3 mb-2 mt-2" style="align-content: left; width: 400px;">
+       <button type="submit" class="input-group-btn mt-2" style="width: 400px; color: #ffffff; background-color: #0000ff; border-color: #0000ff;">Consultar datos</button>
+    </div>  
+
+  </form>
+</div>
+
+<div class="text-left m-3 text-white">
+  <h5>Resultados: </h5>
+</div>
+
+<div class="m-3">  
+  <div class="justify-content-left mb-2" style="display: block; width: 100%;">
+    <p class="mt-1 mb-1 text-white" style="display: inline-block">Mostrar</p>
+    <select class="form-select m-2 mb-1" id="inputResultsPorPagina" style="width: 80px; display: inline-block">
+      <option value="10" selected>10</option>
+      <option value="50">50</option>
+      <option value="100">100</option>
+    </select>
+    <p class="mt-1 mb-1 text-white" style="display: inline-block">Resultados por página</p>
+  </div>
+ 
+  <nav aria-label="Page navigation example">
+    <ul class="pagination">          
+      <div id="seccBtnPaginacion" style="display: flex;">
+
+        {{!-- esta parte se rellena desde el script mas abajo --}}
+
+      </div>           
+    </ul>
+  </nav>
+
+  <div class="overflow-x-auto d-flex" id="tablaDatos" style="display: block; max-width:70%;">
+
+    {{!-- esta parte se rellena desde el script mas abajo --}}
+    
+  </div>  
+</div>
+
+<style>
+  body {
+    background-color: black;
+  }
+</style>
+
+<script>
+
+{{!-- document.getElementById("valorMinimo").addEventListener("input", (event)=>{
+  let vmin;
+  vmin = document.getElementById("valorMinimo").value;
+  document.getElementById("outputValorMinimo").textContent = vmin; 
+});
+document.getElementById("valorMaximo").addEventListener("input", (event)=>{
+  let vmax;
+  vmax = document.getElementById("valorMaximo").value;
+  document.getElementById("outputValorMaximo").textContent = vmax; 
+}); --}}
+
+
+let inputTipoDeDato = document.getElementById("inputTipoDeDato");
+let inputDatoEspecifico = document.getElementById("inputDatoEspecifico");
+let paginaActual;
+let numeroPaginas;
+let grupoPaginaActual;
+
+inputTipoDeDato.addEventListener("change", (event) => {
+if (inputTipoDeDato.value == 1){
+  inputDatoEspecifico.innerHTML=
+  `
+      <option value="all">Todas las temp</option>
+      <option value="temp1">Temp1</option>
+      <option value="temp2">Temp2</option>
+      <option value="temp3">Temp3</option>
+      <option value="temp4">Temp4</option>
+      <option value="temp5">Temp5</option>
+      <option value="temp6">Temp6</option>
+      <option value="temp7">Temp7</option>
+      <option value="temp8">Temp8</option>
+      <option value="temp9">Temp9</option>
+      <option value="temp10">Temp10</option>
+      <option value="temp11">Temp11</option>
+      <option value="temp12">Temp12</option>
+  `
+} else if (inputTipoDeDato.value == 2){
+  console.log("ha seleccionado las temperaturas ambientales");
+   inputDatoEspecifico.innerHTML=
+  `
+      <option value="all">Todas las temp ambiente</option>
+      <option value="ambientemp1">Ambient temp1</option>
+      <option value="ambientemp2">Ambient temp2</option>
+      <option value="ambientemp3">Ambient temp3</option>
+      <option value="ambientemp4">Ambient temp4</option>
+      <option value="ambientemp5">Ambient temp5</option>
+      <option value="ambientemp6">Ambient temp6</option>
+      <option value="ambientemp7">Ambient temp7</option>
+      <option value="ambientemp8">Ambient temp8</option>
+  `
+} else if (inputTipoDeDato.value == 3){
+   inputDatoEspecifico.innerHTML=
+  `
+      <option value="all">Todas las humedades relativas</option>
+      <option value="rh1">Humedad relativa 1</option>
+      <option value="rh2">Humedad relativa 2</option>
+      <option value="rh3">Humedad relativa 3</option>
+      <option value="rh4">Humedad relativa 4</option>
+      <option value="rh5">Humedad relativa 5</option>
+      <option value="rh6">Humedad relativa 6</option>
+      <option value="rh7">Humedad relativa 7</option>
+      <option value="rh8">Humedad relativa 8</option>
+  `
+} else if (inputTipoDeDato.value == 0){
+    inputDatoEspecifico.innerHTML=
+  `
+    <option selected>Seleccione el dato especifico: </option>
+  `   
+}
+});
+
+const cargarDatosTabla = (data = [], registros) => {
+
+//Código que convierte columna timestamp en 2 columnas separadas (fecha y hora)
+data.forEach(dato => {
+let fechaHora = new Date(dato.time);
+let fecha = fechaHora.toLocaleDateString();
+let hora = fechaHora.toLocaleTimeString();
+delete dato.time;
+dato.fecha = fecha;
+dato.hora = hora;
+});
+
+//Codigo html de estructura marco de la tabla
+document.getElementById("tablaDatos").innerHTML= 
+  `
+    <table class="table table-dark table-striped text-center">
+      <thead>
+        <tr>
+          <td colspan="15" style="text-align: left;">Cantidad de registros encontrados: <span>${registros}</span></trd>
+        </tr>
+        <tr id="headerTabla">
+
+        </tr>
+      </thead>
+      
+      <tbody id="cuerpoTabla">
+      
+      </tbody>
+
+      <tfoot>
+        <tr>
+          <td colspan="15" style="text-align: left;">Cantidad de registros encontrados: <span>${registros}</span></trd>
+        </tr>
+      </tfoot>
+    </table>
+`;
+
+//Codigo html del header de la tabla
+document.getElementById("headerTabla").innerHTML = "";
+let nombreColumnaTabla = Object.keys(data[0]);
+for (let i in nombreColumnaTabla){
+  document.getElementById("headerTabla").innerHTML +=
+  `
+  <th scope="col">${nombreColumnaTabla[i]}</th>
+  `
+}
+
+//Codigo html del cuerpo de la tabla
+document.getElementById("cuerpoTabla").innerHTML = "";
+data.forEach(celdaTabla => {
+  let filaTabla = "";
+  for (let i in celdaTabla){
+    filaTabla +=
+      `<td>${celdaTabla[i]}</td>`
+  }
+  document.getElementById("cuerpoTabla").innerHTML +=
+    `<tr>${filaTabla}</tr>`;
+  filaTabla = "";
+});
+
+//Código html botones de paginacion
+let seccBtnPaginacion = document.getElementById("seccBtnPaginacion");
+let inputResultsPorPagina = document.getElementById("inputResultsPorPagina");
+crearBotonesPaginacion(registros);
+} 
+//Fin funcion cargarDatosTabla
+
+const crearBotonesPaginacion = function(numRegs){
+  numeroPaginas = Math.ceil(numRegs/inputResultsPorPagina.value);
+  grupoPaginaActual = Math.ceil(paginaActual/8);
+  seccBtnPaginacion.innerHTML = "";
+  seccBtnPaginacion.innerHTML +=
+  `
+  <li class="page-item" onclick="cambiarPagina(1)"><a class="page-link" href="#" style="color: #ffffff; background-color: #0000ff; border-color: #0000ff;"><span aria-hidden="true">&laquo;</span></a></li> 
+  <li class="page-item"><div class="page-link" href="#" style="color: #ffffff; background-color: #0000ff; border-color: #0000ff;"><span aria-hidden="true">Página</span></div></li>
+  `
+  if(grupoPaginaActual > 1){    
+    seccBtnPaginacion.innerHTML +=
+        `      
+        <li class="page-item active" onclick="cambiarPagina(${8*(grupoPaginaActual-1)})"><a class="page-link" href="#" style="color: #ffffff; background-color: #0000ff; border-color: #0000ff;">...</a></li>
+        `
+  }
+  for(let k = (1 + 8*(grupoPaginaActual-1)); k <= (grupoPaginaActual * 8); k++){   
+        if (k == paginaActual){
+        seccBtnPaginacion.innerHTML +=
+          `      
+          <li class="page-item active" onclick="cambiarPagina(${k})" id="pagina${k}"><a class="page-link" href="#" style="color: #ffffff; background-color: #0000ff; border-color: #0000ff;">${k}</a></li>
+          `
+        }else{
+        seccBtnPaginacion.innerHTML +=
+        `      
+        <li class="page-item" onclick="cambiarPagina(${k})" id="pagina${k}"><a class="page-link text-muted" href="#" style="color: #ffffff; background-color: #0000ff; border-color: #0000ff;">${k}</a></li>
+        `
+        }
+        if(k >= numeroPaginas){
+          break;
+        }
+  }
+  if(grupoPaginaActual * 8 <= numeroPaginas){    
+    seccBtnPaginacion.innerHTML +=
+        `      
+        <li class="page-item active" onclick="cambiarPagina(${1+(grupoPaginaActual * 8)})"><a class="page-link" href="#" style="color: #ffffff; background-color: #0000ff; border-color: #0000ff;">...</a></li>
+        `
+  };
+    seccBtnPaginacion.innerHTML +=
+    `
+    <li class="page-item"><div class="page-link" href="#" style="color: #ffffff; background-color: #0000ff; border-color: #0000ff;"><span aria-hidden="true">de ${numeroPaginas}</span></div></li>
+    <li class="page-item" onclick="cambiarPagina(${numeroPaginas})"><a class="page-link" href="#" style="color: #ffffff; background-color: #0000ff; border-color: #0000ff;"><span aria-hidden="true">&raquo;</span></a></li>
+    `  
+}
+  
+const consultarDatos = async function (){
+  try{
+    let data = new FormData(filtrosForm); //variable que contiene los datos del formulario
+    let desplazamiento;
+    let pathUrl=""; //variable que contiene la url del endpoint a consultar, mas la query string de los filtros aplicados a la consulta
+
+    //seleccion endpoint API segun tipo de datos a consultar (en inputs del formulario)
+    if(inputTipoDeDato.value == 1){
+      pathUrl = `/api/v1/registers/temperatures/${inputDatoEspecifico.value}?`;
+      }else if(inputTipoDeDato.value == 2){
+        pathUrl = `/api/v1/registers/ambientemp/${inputDatoEspecifico.value}?`;
+        }else if(inputTipoDeDato.value == 3){
+          pathUrl = `/api/v1/registers/relativehumidity/${inputDatoEspecifico.value}?`;
+          }else{
+            pathUrl="";
+            alert("seleccione un valor de la lista");
+            }
+
+    //Seleccion de filtros que seran enviados mediante url (query string)
+    if(data.get("fechaInicio")){
+      pathUrl+= `fechaInicio=${data.get("fechaInicio")}&`
+      }
+    if(data.get("fechaTermino")){
+      pathUrl+= `fechaTermino=${data.get("fechaTermino")}&`
+      }
+    if(data.get("valorMinimo")){
+      pathUrl+= `valorMinimo=${data.get("valorMinimo")}&`
+      }
+    if(data.get("valorMaximo")){
+      pathUrl+= `valorMaximo=${data.get("valorMaximo")}&`
+      }
+    if(data.get("inputOrdenPor")){
+      let orden="";
+      let inputOrdenPor = document.getElementById("inputOrdenPor").value;
+      if(inputOrdenPor == "id"){
+        orden = "id"
+      } else if (inputOrdenPor == "time"){
+        orden = "time"
+      } else {
+        orden = document.getElementById("inputDatoEspecifico").value;
+      }      
+      pathUrl+= `ordenPor=${orden}&`
+      }
+    if(data.get("inputAscDesc")){
+      pathUrl+= `ascDesc=${data.get("inputAscDesc")}&`
+      }
+    if(inputResultsPorPagina.value){
+      pathUrl+= `limite=${inputResultsPorPagina.value}&`
+      }
+    desplazamiento = inputResultsPorPagina.value * (paginaActual - 1);
+    if(desplazamiento){
+       pathUrl+= `desplazamiento=${desplazamiento}&`
+    }
+
+    //Envio solicitud GET al endpoint de la API
+    let solicitud = await fetch(pathUrl,{
+      method: "GET",
+      });
+
+    let respuesta = await solicitud.json();
+
+    //Llamado a la funcion que carga en la tabla html los datos que entrega la API
+    if(respuesta.code == 200){
+      cargarDatosTabla(respuesta.data, respuesta.registros);
+      }else {
+        alert(respuesta.message);
+        }
+  }catch(error){
+    console.log("Error.");
+    }
+}
+//Fin funcion consultarDatos
+
+const cambiarPagina = function(pag){
+  paginaActual = pag;
+  consultarDatos();
+}
+
+filtrosForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  paginaActual = 1;
+  grupoPaginaActual = 1;
+  consultarDatos();
+});
+
+inputResultsPorPagina.addEventListener("change", (event) => { 
+  event.preventDefault();
+  let cantRegistros;
+  cantRegistros = consultarDatos();
+});
+
+</script>
